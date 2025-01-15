@@ -1,0 +1,76 @@
+import styled from "styled-components";
+
+export const Container = styled.div`
+  margin: 0 auto;
+  height: 100vh;
+  max-width: 700px;
+`;
+
+export const InfoContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  max-width: 620px;
+  margin: 30px auto;
+  padding-bottom: 40px;
+
+  span {
+    text-decoration: underline;
+    cursor: pointer;
+    &:hover {
+      color: tomato;
+    }
+  }
+
+  img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #ebdddd;
+  }
+
+  .verified {
+    color: royalblue;
+    margin: 0 5px;
+  }
+
+  @media (max-width: 500px) {
+    img {
+      width: 100px;
+    }
+    .verified {
+      font-size: 15px;
+    }
+    margin: 20px auto;
+    font-size: 11px;
+    padding: 0%;
+  }
+`;
+
+export const Info = styled.div`
+  width: 60%;
+  .owner-ID {
+    font-size: 30px;
+    @media (max-width: 500px) {
+      font-size: 20px;
+    }
+  }
+`;
+
+export const Stats = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 12px 0;
+`;
+
+export const Bio = styled.div`
+  p {
+    margin: 2px 0;
+  }
+
+  .category {
+    color: grey;
+  }
+`;
