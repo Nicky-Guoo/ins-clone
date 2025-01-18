@@ -1,12 +1,17 @@
 import{useParams} from 'react-router-dom';
 import { InfoContainer , Info, Stats, Bio} from './Profile.styles';
 import { initialState as profileData} from '../../Redux/ProfileData';
-// import { initialState as postData} from '../../Redux/PostData'; 
+import { initialState as postData} from '../../Redux/PostData'; 
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 const ProfileInfo =() => {
+  // 从 URL 获取用户 ID
     const {id} = useParams();
     console.log('id', id);
+    // 过滤出与用户 ID 匹配的帖子
+    let filteredPosts = postData.filter((post) => {
+      return post.userID === id;
+    });
     return (
       <>
       {profileData[id]
@@ -18,10 +23,13 @@ const ProfileInfo =() => {
           </p>
           <Stats>
             <p>
-              <strong>{profileData[id].followers}</strong>Followers
+              <strong>{filteredPosts.length}</strong> Posts
             </p>
             <p>
-            <strong>{profileData[id].following}</strong>Following
+              <strong>{profileData[id].followers}</strong> Followers
+            </p>
+            <p>
+            <strong>{profileData[id].following}</strong> Following
             </p>
           </Stats>
 

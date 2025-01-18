@@ -74,3 +74,32 @@ export const Bio = styled.div`
     color: grey;
   }
 `;
+
+export const PostGrid = styled.div`
+  padding: 20px 10px;
+  border-top: 1px solid #b5b3b3;
+  z-index: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 7px;
+
+  .empty-post-section {
+    position: absolute;
+    left: 50%;
+    color: grey;
+  }
+
+  div {
+    width: 100%;
+    height: 80%;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 2px;
+  }
+`;
