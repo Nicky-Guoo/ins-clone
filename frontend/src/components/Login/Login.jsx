@@ -12,8 +12,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
 import { setAuthToken } from "../../apiConfig";
+import { useDispatch } from "react-redux";
+import { saveUserID } from "../../Redux/UserData";
 
 const Login = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
@@ -40,6 +43,8 @@ const Login = () => {
       console.log(response.data);
       // set token in local storage
       setAuthToken(response.data.token);
+      // save user id in redux
+      dispatch(saveUserID(response.data.userID));
 
       setFormData({ username: "", password: "" });
       navigate("/home");

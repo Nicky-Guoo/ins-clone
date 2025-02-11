@@ -11,8 +11,11 @@ import {
 import instagram from "../../assets/images/ins.webp";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { saveUserID } from "../../Redux/UserData";
 
 const Register = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   // form data state
@@ -51,6 +54,9 @@ const Register = () => {
       const response = await axios.post(url, formData);
       // get response data
       console.log(response.data);
+      // save user id in redux
+      dispatch(saveUserID(response.data.userID));
+
       // clear form data
       setFormData({ fullName: "", email: "", username: "", password: "" });
       navigate("/home");
