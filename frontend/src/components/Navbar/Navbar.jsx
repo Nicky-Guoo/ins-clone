@@ -70,7 +70,7 @@ const Navbar = () => {
                 }`}
               >
                 <div className="dropdown-item">
-                  <Link to={`profile/${userID}`}>
+                  <Link to={`/profile/${userID}`}>
                     <div className="dropdown_link">Profile</div>
                   </Link>
                 </div>

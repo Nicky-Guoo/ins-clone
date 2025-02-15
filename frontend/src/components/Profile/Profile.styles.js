@@ -26,7 +26,7 @@ export const InfoContainer = styled.div`
     width: 150px;
     height: 150px;
     border-radius: 50%;
-    object-fit: cover;
+    object-fit: contain;
     border: 1px solid #ebdddd;
   }
 
@@ -44,7 +44,7 @@ export const InfoContainer = styled.div`
     }
     margin: 20px auto;
     font-size: 11px;
-    padding: 0%;
+    padding: 0;
   }
 `;
 
@@ -60,18 +60,16 @@ export const Info = styled.div`
 
 export const Stats = styled.div`
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   margin: 12px 0;
 `;
-
 export const Bio = styled.div`
   p {
     margin: 2px 0;
   }
-
   .category {
-    color: grey;
+    color: gray;
   }
 `;
 
@@ -80,26 +78,91 @@ export const PostGrid = styled.div`
   border-top: 1px solid #b5b3b3;
   z-index: 0;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   grid-gap: 7px;
 
-  .empty-post-section {
+  #empty-post-section {
     position: absolute;
-    left: 50%;
-    color: grey;
+    left: 45%;
+    color: gray;
   }
 
   div {
     width: 100%;
     height: 80%;
+    position: relative;
     cursor: pointer;
     border-radius: 5px;
+
+    img {
+      width: 100%;
+      height: 100%;
+      border-radius: 2px;
+      object-fit: cover;
+    }
+
+    .overlay {
+      background: linear-gradient(50deg, #d6249f, #285aeb);
+      height: 100%;
+      width: 100%;
+      opacity: 0;
+      position: absolute;
+      transition: all 0.2s;
+    }
+
+    &:hover {
+      .overlay {
+        opacity: 0.4;
+      }
+    }
   }
 
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 2px;
+  @media (max-width: 500px) {
+    grid-gap: 2px;
   }
+`;
+
+export const FormContainer = styled.div`
+  width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+`;
+
+export const FormLabel = styled.label`
+  display: block;
+  margin-bottom: 5px;
+`;
+
+export const FormInput = styled.input`
+  width: 80%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+`;
+export const FormButton = styled.button`
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
+export const LoadIcon = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+`;
+
+export const ErrMessage = styled.p`
+  color: red;
 `;
