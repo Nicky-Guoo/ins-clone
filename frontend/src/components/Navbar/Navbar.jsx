@@ -4,15 +4,24 @@ import ChatIcon from "@mui/icons-material/Chat";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { NavBar, InputField, OtherIcons } from "./Navbar.styles";
 import { Link, useNavigate } from "react-router-dom";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
+import defaultIcon from "../../assets/images/user.png";
 
 const Navbar = () => {
-  const navigateTo = useNavigate();
-  const [dropdownState, setDropdownState] = useState(false); //下拉菜单状态
+  const navigateTo = useNavigate(); //路由导航
   const searchValue = useRef(); //监听输入框的值
   const userID = useSelector((state) => state.user.userID); //用户ID
-  console.log("userID", userID);
+  const profiles = useSelector((state) => state.profile.profileData); //用户信息
+  const isProfileAvailable =
+    profiles.length && profiles.filter((profile) => profile.userID === userID); //用户信息是否存在
+  const [dropdownState, setDropdownState] = useState(false); //下拉菜单状态
+  const [imgPath, setImgPath] = useState(""); //用户头像路径
+
+  useEffect(() => {
+    const url = `http://localhost:8000/api/profiles/image/${userID}`;
+    setImgPath(url);
+  }, [isProfileAvailable, userID]); //获取用户头像
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -63,7 +72,11 @@ const Navbar = () => {
               <FavoriteIcon onClick={likeBtn} />
             </div>
             <div className="dropdown-menu">
-              <img src="" alt="profile-pic" onClick={handleDropdownClick} />
+              <img
+                src={isProfileAvailable ? imgPath : defaultIcon}
+                alt="profile-pic"
+                onClick={handleDropdownClick}
+              />
               <div
                 className={`dropdown-items ${
                   dropdownState ? "isVisible" : "isHidden"

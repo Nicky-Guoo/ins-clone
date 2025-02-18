@@ -7,8 +7,7 @@ import {
   ErrMessage,
 } from "./Profile.styles";
 import { axiosInstance } from "../../apiConfig";
-
-export default function CreateProfile({ userID }) {
+export default function CreateProfile({ userID, setIsProfileCreated }) {
   const [formData, setFormData] = useState({
     name: "",
     category: "",
@@ -19,18 +18,17 @@ export default function CreateProfile({ userID }) {
     following: 666,
     verified: true,
   });
-
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const isValidated = Object.keys(formData).every((key) => formData[key]); // Check if all the fields are filled
+    const isValidated = Object.keys(formData).every((key) => formData[key]);
     if (!isValidated) {
-      setErrorMessage("Please fill all the fields");
+      setErrorMessage("Please enter the required fields!");
       return;
     }
     setErrorMessage("");
-    const formDataToSubmit = new FormData(); // Create a new FormData instance
+    const formDataToSubmit = new FormData();
     formDataToSubmit.append("name", formData.name);
     formDataToSubmit.append("category", formData.category);
     formDataToSubmit.append("bio", formData.bio);
@@ -45,31 +43,33 @@ export default function CreateProfile({ userID }) {
     formDataToSubmit.append("verified", formData.verified);
     try {
       const response = await axiosInstance.post(
-        "/api/profile",
+        "/api/profiles",
         formDataToSubmit,
         { headers: { "Content-Type": "multipart/form-data" } }
-      ); // Send a POST request to the server
+      );
+      setIsProfileCreated(true);
       console.log("profile uploaded successfully:", response.data);
     } catch (error) {
-      console.error("Error creating profile:", error);
+      console.error("Error uploading profile:", error);
     }
   };
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0]; // Get the file from the input
+    const file = e.target.files[0];
     console.log("selected image", file);
-    setFormData({ ...formData, profilePic: file }); // Update the state with the file
+    setFormData({ ...formData, profilePic: file });
   };
+
   const handleChange = (e) => {
-    const { name, value } = e.target; // Destructuring the name and value from the target
-    setFormData({ ...formData, [name]: value }); // Updating the state
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
   return (
     <FormContainer>
       <h2>Create Your Profile</h2>
       <form onSubmit={handleSubmit}>
         <div>
-          <FormLabel htmlFor="name">Profile Picture</FormLabel>
+          <FormLabel htmlFor="profilePic">Profile Picture</FormLabel>
           <FormInput
             type="file"
             id="profilePic"
@@ -88,7 +88,7 @@ export default function CreateProfile({ userID }) {
           />
         </div>
         <div>
-          <FormLabel htmlFor="category">category</FormLabel>
+          <FormLabel htmlFor="category">Category</FormLabel>
           <FormInput
             type="text"
             id="category"

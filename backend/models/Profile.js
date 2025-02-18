@@ -5,8 +5,9 @@ const profileSchema = new mongoose.Schema({
   profilePic: { type: Buffer },
   followers: { type: String },
   following: { type: Number },
+  name: { type: String },
   category: { type: String },
-  Bio: { type: String },
+  bio: { type: String },
   verified: { type: Boolean },
 });
 

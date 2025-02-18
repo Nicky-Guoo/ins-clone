@@ -3,8 +3,9 @@ const cors = require("cors");
 const fileUpload = require("express-fileupload");
 const authRoutes = require("./routes/authRoutes");
 const profileRoutes = require("./routes/profileRoutes");
+const postRoutes = require("./routes/postRoutes");
 const connectDB = require("./config/db");
-
+//create a web server
 const app = express();
 //connect database
 connectDB();
@@ -15,9 +16,10 @@ app.use(fileUpload());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/profiles", profileRoutes);
+app.use("/api/posts", postRoutes);
 
 const PORT = 8000;
-
-app.listen(PORT, () => {
+//127.0.0.1
+app.listen(8000, () => {
   console.log("Server is running on http://localhost:8000");
 });

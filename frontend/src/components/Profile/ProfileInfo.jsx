@@ -1,10 +1,10 @@
 import { useParams } from "react-router-dom";
 import { InfoContainer, Info, Stats, Bio, LoadIcon } from "./Profile.styles";
-import { initialState as profileData } from "../../Redux/ProfileData";
 import { initialState as postData } from "../../Redux/PostData";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import CreateProfile from "./CreateProfile";
+import axios from "axios";
 
 const ProfileInfo = () => {
   // 从 URL 获取用户 ID
@@ -16,19 +16,36 @@ const ProfileInfo = () => {
   });
   const [profile, setProfile] = useState(null);
   const [isProfileCreated, setIsProfileCreated] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    const url = `http://localhost:8000/api/profiles/${id}`;
+    axios
+      .get(url)
+      .then((response) => {
+        console.log("profile", response.data);
+        setProfile(response.data);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error fetching profile:", err);
+        setIsLoading(false);
+      });
+  }, [id, isProfileCreated]);
   if (isLoading) {
     return <LoadIcon>Loading...</LoadIcon>;
   }
   return (
     <Fragment>
-      {profileData[id] ? (
+      {profile ? (
         <InfoContainer>
-          <img src={profileData[id].profilePic} alt="project picture" />
+          <img
+            src={`http://localhost:8000/api/profiles/image/${profile.userID}`}
+            alt="profile picture"
+          />
           <Info>
             <p className="owner-ID">
-              {profileData[id].userID}
-              {profileData[id].verified ? (
+              {profile.userID}
+              {profile.verified ? (
                 <CheckCircleIcon className="verified" />
               ) : null}
             </p>
@@ -37,25 +54,28 @@ const ProfileInfo = () => {
                 <strong>{filteredPosts.length}</strong> Posts
               </p>
               <p>
-                <strong>{profileData[id].followers}</strong> Followers
+                <strong>{profile.followers}</strong> Followers
               </p>
               <p>
-                <strong>{profileData[id].following}</strong> Following
+                <strong>{profile.following}</strong> Following
               </p>
             </Stats>
 
             <Bio>
               <p className="name">
-                <strong>{profileData[id].name}</strong>
+                <strong>{profile.name}</strong>
               </p>
-              <p className="category">{profileData[id].category}</p>
-              <p>{profileData[id].bio}</p>
+              <p className="category">{profile.category}</p>
+              <p>{profile.bio}</p>
             </Bio>
           </Info>
         </InfoContainer>
       ) : (
         <InfoContainer>
-          <CreateProfile userID={id} />
+          <CreateProfile
+            userID={id}
+            setIsProfileCreated={setIsProfileCreated}
+          />
         </InfoContainer>
       )}
     </Fragment>
