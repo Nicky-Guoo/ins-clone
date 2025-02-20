@@ -13,6 +13,15 @@ import { useSelector } from "react-redux";
 
 export default function Post() {
   const allPosts = useSelector((state) => state.post.postData);
+  const handlePostLikes = async (type, postData) => {
+    let updatedPost = { ...postData };
+    if (type === "singleClick") {
+      updatedPost.isLiked = !postData.isLiked;
+      updatedPost.like = String(
+        parseInt(updatedPost.likes, 10) + (updatedPost.isLiked ? 1 : -1)
+      );
+    }
+  };
   return (
     <Container>
       {allPosts && allPosts.length > 0 ? (
@@ -47,6 +56,7 @@ export default function Post() {
                   <div className="actions">
                     <FavoriteIcon
                       className={`like-icon ${post.isLiked ? "liked" : ""} `}
+                      onClick={() => handlePostLikes("singleClick", post)}
                     />
                     <ChatBubbleOutlineOutlinedIcon />
                     <TelegramIcon />

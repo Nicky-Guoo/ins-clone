@@ -7,7 +7,11 @@ import {
   ErrMessage,
 } from "./Profile.styles";
 import { axiosInstance } from "../../apiConfig";
+import { saveProfileData } from "../../Redux/ProfileData";
+import { useDispatch } from "react-redux"; //调用redux的dispatch方法（useSelector 用来读取redux里的state）
+
 export default function CreateProfile({ userID, setIsProfileCreated }) {
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     name: "",
     category: "",
@@ -47,6 +51,10 @@ export default function CreateProfile({ userID, setIsProfileCreated }) {
         formDataToSubmit,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
+      const updatedProfile = await axiosInstance.get("/api/profiles");
+      console.log("updatedProfile", updatedProfile.data);
+
+      dispatch(saveProfileData(updatedProfile.data));
       setIsProfileCreated(true);
       console.log("profile uploaded successfully:", response.data);
     } catch (error) {
