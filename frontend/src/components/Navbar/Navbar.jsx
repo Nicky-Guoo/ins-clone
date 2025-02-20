@@ -13,15 +13,18 @@ const Navbar = () => {
   const searchValue = useRef(); //监听输入框的值
   const userID = useSelector((state) => state.user.userID); //用户ID
   const profiles = useSelector((state) => state.profile.profileData); //用户信息
-  const isProfileAvailable =
-    profiles.length && profiles.filter((profile) => profile.userID === userID); //用户信息是否存在
+  const currentProfile = profiles.length
+    ? profiles.filter((profile) => profile.userID === userID)
+    : null; //用户信息是否存在
   const [dropdownState, setDropdownState] = useState(false); //下拉菜单状态
   const [imgPath, setImgPath] = useState(""); //用户头像路径
 
   useEffect(() => {
-    const url = `http://localhost:8000/api/profiles/image/${userID}`;
-    setImgPath(url);
-  }, [isProfileAvailable, userID]); //获取用户头像
+    if (currentProfile) {
+      const url = `http://localhost:8000/api/profiles/image/${userID}`;
+      setImgPath(url);
+    }
+  }, [currentProfile, userID]); //获取用户头像
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -73,7 +76,11 @@ const Navbar = () => {
             </div>
             <div className="dropdown-menu">
               <img
-                src={isProfileAvailable ? imgPath : defaultIcon}
+                src={
+                  currentProfile && currentProfile.length
+                    ? imgPath
+                    : defaultIcon
+                }
                 alt="profile-pic"
                 onClick={handleDropdownClick}
               />
