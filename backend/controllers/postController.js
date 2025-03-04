@@ -69,4 +69,37 @@ const getPostImage = async (req, res) => {
   }
 };
 
-module.exports = { getAllPosts, createPost, getPostImage };
+const updatePosts = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { likes, isLiked, comments } = req.body;
+    //convert id to ObjectId
+    const postObjectId = new mongoose.Types.ObjectId(id);
+    const updatedFields = {};
+    if (likes !== undefined) {
+      updatedFields.likes = likes;
+    }
+    if (isLiked !== undefined) {
+      updatedFields.isLiked = isLiked;
+    }
+    if (comments !== undefined) {
+      updatedFields.comments = comments;
+    }
+    const updatedPost = await Post.findByIdAndUpdate(
+      postObjectId,
+      { $set: updatedFields }, //use $set to update only the fields that are present in updatedFields
+      { new: true }
+    );
+    if (!updatedPost) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+    res.json(updatedPost);
+
+    //update post document
+  } catch (error) {
+    console.error("Error updating posts:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+module.exports = { getAllPosts, createPost, getPostImage, updatePosts };
