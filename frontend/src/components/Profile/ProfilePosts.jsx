@@ -14,16 +14,23 @@ const ProfilePosts = () => {
     <PostGrid>
       {filteredPosts.length ? (
         // 显示用户的所有帖子
-        filteredPosts.map((post, index) => (
-          // 为每个帖子创建一个 div
-          <div key={`${index}-${post.userID}`}>
-            <img src={post.postLink} alt="post" />
-          </div>
-        ))
+
+        filteredPosts.map((post) => {
+          return (
+            // <Link key={post.postID} to={`/profile/${id}`}>
+
+            <div key={post.postID}>
+              <div className="overlay"></div>
+              <img
+                alt="post"
+                src={`http://localhost:8000/api/posts/image/${post._id}`}
+              />
+            </div>
+            // </Link>
+          );
+        })
       ) : (
-        <div className="empty-post-section">
-          <h2>No Posts Yet!</h2>
-        </div>
+        <h2 className="empty-post-section">No Posts Yet!</h2>
       )}
     </PostGrid>
   );

@@ -40,7 +40,7 @@ const createPost = async (req, res) => {
       likes,
       isLiked,
       caption,
-      comments,
+      comments: JSON.parse(comments),
       postID,
     });
     //save the new post document to the db

@@ -11,18 +11,16 @@ export const postDataSlice = createSlice({
     savePostData: (state, action) => {
       state.postData = action.payload;
     },
-
     handleLikeSingleClick: (state, action) => {
       const updatedPost = action.payload;
       const postIndex = state.postData.findIndex(
         (post) => post.postID === updatedPost.postID
       );
-      console.log("updatedPost", updatedPost, postIndex);
+      console.log("updatedPost,postIndex", updatedPost, postIndex);
       if (postIndex !== -1) {
         state.postData[postIndex] = updatedPost;
       }
     },
-
     handleLikeDoubleClick: (state, action) => {
       const updatedPost = action.payload;
       const postID = updatedPost.postID;
@@ -38,9 +36,22 @@ export const postDataSlice = createSlice({
         icon.classList.remove("active");
       }, 700);
     },
+    postComment: (state, action) => {
+      const updatedPost = action.payload;
+      const postIndex = state.postData.findIndex(
+        (post) => post.postID === updatedPost.postID
+      );
+      if (postIndex !== -1) {
+        state.postData[postIndex] = updatedPost;
+      }
+    },
   },
 });
 
-export const { savePostData, handleLikeSingleClick, handleLikeDoubleClick } =
-  postDataSlice.actions;
+export const {
+  savePostData,
+  handleLikeSingleClick,
+  handleLikeDoubleClick,
+  postComment,
+} = postDataSlice.actions;
 export default postDataSlice.reducer;

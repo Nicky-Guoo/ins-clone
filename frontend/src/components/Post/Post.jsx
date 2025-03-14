@@ -13,32 +13,39 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   handleLikeSingleClick,
   handleLikeDoubleClick,
+  postComment,
 } from "../../Redux/PostData";
 
 export default function Post() {
   const dispatch = useDispatch();
   const allPosts = useSelector((state) => state.post.postData);
   const userID = useSelector((state) => state.user.userID);
-  const [comment, setComment] = useState("");
+  const [comment, setComment] = useState({});
+
   const updatePostData = async (id, updatedObj) => {
     try {
       const url = `/api/posts/${id}`;
       await axiosInstance.put(url, updatedObj);
     } catch (error) {
-      console.error("Error updating posts:", error);
+      console.error("Error updating post data:", error);
     }
   };
-  const handlePostComment = async (postData, text) => {
-    let updateObj = {
-      comments: [...postData["comments"], { userID, text }],
+  const handlePostComment = (postData, text) => {
+    let updatedPost = {
+      ...postData,
+      comments: [...postData["comments"], [userID, text]],
+    };
+    dispatch(postComment(updatedPost));
+    let updatedObj = {
+      comments: [...postData["comments"], [userID, text]],
       isLiked: postData.isLiked,
       likes: postData.likes,
     };
-    updatePostData(postData._id, updateObj);
-    setComment("");
+    updatePostData(postData._id, updatedObj);
+    setComment((prevComments) => ({ ...prevComments, [postData._id]: "" }));
   };
 
-  const handlePostLikes = async (type, postData) => {
+  const handlePostLikes = (type, postData) => {
     let updatedPost = { ...postData };
     let likes = "";
     if (type === "singleClick") {
@@ -47,14 +54,14 @@ export default function Post() {
         parseInt(updatedPost.likes, 10) + (updatedPost.isLiked ? 1 : -1)
       );
       updatedPost.likes = likes;
-      dispatch(handleLikeSingleClick(updatedPost)); // 调用 Redux action
+      dispatch(handleLikeSingleClick(updatedPost));
     } else if (type === "doubleClick") {
       updatedPost.isLiked = true;
       likes = String(
         parseInt(updatedPost.likes, 10) + (postData.isLiked ? 0 : 1)
       );
       updatedPost.likes = likes;
-      dispatch(handleLikeDoubleClick(updatedPost)); // 调用 Redux action
+      dispatch(handleLikeDoubleClick(updatedPost));
     }
     let updatedObj = {
       isLiked: type === "singleClick" ? !postData.isLiked : true,
@@ -62,6 +69,10 @@ export default function Post() {
       comments: [...postData.comments],
     };
     updatePostData(postData._id, updatedObj);
+  };
+  const handleCommentLike = (event) => {
+    let color = event.target.style.color;
+    event.target.style.color = color === "tomato" ? "#2f2d2d" : "tomato";
   };
   return (
     <Container>
@@ -118,19 +129,54 @@ export default function Post() {
                     <a href="#">...more</a>
                   </span>
                 </Caption>
-                <Comments></Comments>
+                <Comments>
+                  {post.comments && post.comments.length !== 0 ? (
+                    <>
+                      {post.comments.map((comment, i) => {
+                        return (
+                          <li key={`${i}-${comment[0]}`}>
+                            <div>
+                              <Link to={`/profile/${comment[0]}`}>
+                                <p className="user">{comment[0]}</p>
+                              </Link>
+                              <p className="comment">{comment[1]}</p>
+                            </div>
+                            <div>
+                              <FavoriteIcon
+                                style={{ fontSize: 12 }}
+                                onClick={handleCommentLike}
+                              />
+                            </div>
+                          </li>
+                        );
+                      })}
+                    </>
+                  ) : (
+                    <p className="empty-comment-box">No Comments Yet!</p>
+                  )}
+                </Comments>
                 <CommentInput>
                   <SentimentSatisfiedOutlinedIcon />
-                  <form onSubmit={() => handlePostComment(post, comment)}>
+                  <form>
                     <input
                       className={`comment-input-${post.postID}`}
                       type="text"
                       placeholder="Add a comment..."
-                      value={comment}
-                      onChange={(e) => setComment(() => e.target.value)}
+                      value={comment[post._id] || ""}
+                      onChange={(e) =>
+                        setComment((prevComments) => ({
+                          ...prevComments,
+                          [post._id]: e.target.value,
+                        }))
+                      }
                     />
                   </form>
-                  <a href="#" onClick={() => handlePostComment(post, comment)}>
+                  <a
+                    href="#"
+                    onClick={() =>
+                      handlePostComment(post, comment[post._id]) || ""
+                    }
+                  >
                     Post
                   </a>
                 </CommentInput>
@@ -153,6 +199,7 @@ const UserPost = styled.div`
   margin: 20px 0 20px 200px;
   border: 1px solid hsl(147, 7%, 75%);
   font-size: 14px;
+
   a,
   .user {
     text-decoration: none;
@@ -160,19 +207,23 @@ const UserPost = styled.div`
     font-weight: bold;
     margin-right: 5px;
     cursor: pointer;
+
     &:hover {
       text-decoration: underline;
     }
   }
+
   svg {
     cursor: pointer;
     margin-right: 7px;
     color: #2f2d2d;
     transition: transform 0.2s;
+
     &:hover {
       transform: scale(1.1);
     }
   }
+
   @media (max-width: 768px) {
     margin: 0 0 20px;
     font-size: 12px;
@@ -185,15 +236,18 @@ const UserInfo = styled.section`
   justify-content: space-between;
   align-items: center;
   padding: 5px 10px;
+
   .post-info {
     display: flex;
     justify-content: center;
     align-items: center;
+
     img {
       width: 45px;
       height: 45px;
       border-radius: 50%;
     }
+
     .icon {
       margin-right: 10px;
     }
@@ -205,6 +259,7 @@ const Media = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+
   svg {
     position: absolute;
     background: transparent;
@@ -214,10 +269,12 @@ const Media = styled.div`
     font-size: 100px;
     transition: all 0.2s ease-in;
   }
+
   svg.active {
     transform: scale(1);
     opacity: 1;
   }
+
   img {
     width: 100%;
   }
@@ -231,6 +288,7 @@ const PostActionIcons = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+
   .like-icon.liked {
     color: tomato;
   }
@@ -264,6 +322,7 @@ const Comments = styled.div`
       display: flex;
     }
   }
+
   .empty-comment-box {
     color: grey;
   }
@@ -275,6 +334,7 @@ const CommentInput = styled.div`
   align-items: center;
   border-top: 1px solid hsl(147, 7%, 75%);
   padding: 8px 0;
+
   form,
   input {
     border: none;
@@ -282,6 +342,7 @@ const CommentInput = styled.div`
     font-size: 15px;
     width: 100%;
   }
+
   a {
     margin: 0 10px;
     font-size: 15px;

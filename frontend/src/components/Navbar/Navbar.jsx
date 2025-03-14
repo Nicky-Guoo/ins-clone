@@ -55,7 +55,7 @@ const Navbar = () => {
             />
           </Link>
           <InputField>
-            <SearchIcon style={{ color: "grey", frontSize: 20 }} />
+            <SearchIcon style={{ color: "gray", fontSize: 20 }} />
             <form onSubmit={handleSubmit}>
               <input type="text" placeholder="Search" ref={searchValue} />
             </form>
@@ -91,7 +91,7 @@ const Navbar = () => {
               >
                 <div className="dropdown-item">
                   <Link to={`/profile/${userID}`}>
-                    <div className="dropdown_link">Profile</div>
+                    <div className="dropdown__link">Profile</div>
                   </Link>
                 </div>
                 <div className="dropdown-item">
